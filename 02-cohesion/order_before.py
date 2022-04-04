@@ -10,6 +10,7 @@ class Order:
         self.quantities.append(quantity)
         self.prices.append(price)
 
+
     def pay(self, payment_type: str, security_code: str) -> None:
         if payment_type == "debit":
             print("Processing debit payment type")
