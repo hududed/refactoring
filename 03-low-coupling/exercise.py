@@ -8,20 +8,21 @@ class VehicleData:
     brand: str
     price_per_day: int
     price_per_km: int
-    rent_free: int = 100
-
-    def compute_rental_cost(self, days: int, km: int) -> int:
-        """Computes the rental cost for a vehicle."""
-        paid_kms = max(km - self.rent_free, 0)
-        return self.price_per_km * paid_kms + self.price_per_day * days
 
 
-def read_vehicle_type(vehicle_types: list[str]) -> str:
+VEHICLE_DATA = {
+    "vw": VehicleData(brand="vw", price_per_km=30, price_per_day=6000),
+    "bmw": VehicleData(brand="bmw", price_per_km=35, price_per_day=8500),
+    "ford": VehicleData(brand="ford", price_per_km=25, price_per_day=12000),
+}
+
+
+def read_vehicle_type() -> str:
     """Reads the vehicle type from the user."""
     vehicle_type = ""
-    while vehicle_type not in vehicle_types:
+    while vehicle_type not in VEHICLE_DATA:
         vehicle_type = input(
-            f"What type of vehicle would you like to rent ({', '.join(vehicle_types)})? "
+            f"What type of vehicle would you like to rent ({', '.join(VEHICLE_DATA)})? "
         )
     return vehicle_type
 
@@ -54,28 +55,25 @@ def read_kms_to_drive() -> int:
     return km
 
 
-
+def compute_rental_cost(vehicle_type: str, days: int, km: int) -> int:
+    """Computes the rental cost for a vehicle."""
+    vehicle_data = VEHICLE_DATA[vehicle_type]
+    price_per_km = vehicle_data.price_per_km
+    price_per_day = vehicle_data.price_per_day
+    paid_kms = max(km - 100, 0)
+    return price_per_km * paid_kms + price_per_day * days
 
 
 def main():
 
-
-    VEHICLE_DATA = {
-        "vw": VehicleData(brand="vw", price_per_km=30, price_per_day=6000),
-        "bmw": VehicleData(brand="bmw", price_per_km=35, price_per_day=8500),
-        "ford": VehicleData(brand="ford", price_per_km=25, price_per_day=12000),
-    }
-
-    vehicle_type = read_vehicle_type(set(VEHICLE_DATA.keys()))
+    vehicle_type = read_vehicle_type()
 
     days = read_rent_days()
 
     km = read_kms_to_drive()
 
-    vehicle_data = VEHICLE_DATA[vehicle_type]
-
     # compute the final rental price
-    rental_price = vehicle_data.compute_rental_cost(days, km)
+    rental_price = compute_rental_cost(vehicle_type, days, km)
 
     # print the result
     print(f"The total price of the rental is ${(rental_price / 100):.2f}")
